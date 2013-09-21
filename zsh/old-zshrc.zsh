@@ -51,7 +51,6 @@ export PATH=$PATH:/home/vikrant/bin:/usr/lib/lightdm/lightdm:/usr/local/sbin:/us
 
 # Shell exports
 export LANG=en_US.utf8
-export EDITOR="emacsclient"
 
 # aliases
 alias resh='source ~/.zshrc'
@@ -59,17 +58,11 @@ alias halt='sudo halt'
 alias reboot='sudo reboot'
 alias hibernate='sudo pm-hibernate'
 alias byebye='sudo shutdown now'
-alias ec='emacsclient'
 alias i='sudo apt-get install -y'
 alias t='tree -C | more'
 alias lt='ls --color -lht | head'
 alias lt='ls --color -lht | head'
 #alias ltr='find . -mtime -1 -print0 | xargs -0 head | xargs -0 ls -lht'
-function man_ () {
-    emacsclient -e "(man \"$*\")" 2>&1 >/dev/null || man "$*"
-}
-
-alias man=man_
 alias git-make='make -j 8 CFLAGS="-g -O0 -Wall"'
 alias git-prove 'make -j 8 CFLAGS="-g -O0 -Wall" DEFAULT_TEST_TARGET=prove GIT_PROVE_OPTS="-j 15" test'
 
