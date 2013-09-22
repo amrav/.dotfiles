@@ -24,19 +24,24 @@ proxies=( \
     "http://144.16.192.217:8080" \
     "http://144.16.192.218:8080" \
     "http://144.16.192.245:8080" \
-    "http://144.16.192.247:8080" \    
-    )
+    "http://144.16.192.247:8080")
 
 # Use Microsoft servers to download large file
 large_file_url="http://download.microsoft.com/download/8/A/C/8AC7C482-BC74-492E-B978-7ED04900CEDE/IE10-Windows6.1-x86-en-us.exe"
 
 function speedtest_proxies() {
-    echo "Each test will take 30 seconds. Speed is in B/s. Downloading Microsoft IE 10 :P\n"
+    time=30
+    [[ $1 -gt 0 ]] && time=$1 && echo "Set time to $time"
+    echo "The test will take ~$time seconds. Downloading Microsoft IE 10 :P\n"
     for proxy in $proxies;
-    do echo "Testing proxy: $proxy..." && \
-	curl --silent --max-time 30 --proxy $proxy -o /dev/null \
-	--write-out "Speed: %{speed_download}\n\n" $large_file_url;
+    do echo "Testing proxy: $proxy...";
+	curl --silent --max-time $time --proxy $proxy -o /dev/null \
+	    --write-out "$proxy --> %{speed_download} B/s\n" \
+	    $large_file_url >> ~/.speedtest_proxy &
     done
+    echo "Waiting for results..." && wait && echo "Fastest proxies:" && \
+	sort -k3 -n -r ~/.speedtest_proxy | column -t \
+	&& rm ~/.speedtest_proxy
 }
     
     
