@@ -60,9 +60,11 @@ alias reboot='sudo reboot'
 alias hibernate='sudo pm-hibernate'
 alias byebye='sudo shutdown now'
 alias i='sudo apt-get install -y'
+alias biggest='du -a | sort -nr | less'
 alias t='tree -C | more'
 alias lt='ls --color -lht | head'
 alias lt='ls --color -lht | head'
+alias cdl='cd $1 && ls .'
 #alias ltr='find . -mtime -1 -print0 | xargs -0 head | xargs -0 ls -lht'
 alias git-make='make -j 8 CFLAGS="-g -O0 -Wall"'
 alias git-prove 'make -j 8 CFLAGS="-g -O0 -Wall" DEFAULT_TEST_TARGET=prove GIT_PROVE_OPTS="-j 15" test'
@@ -75,6 +77,9 @@ bindkey '\C-w' backward-kill-word
 # customize history
 setopt extended_history
 setopt hist_ignore_all_dups
+
+#customize globbing
+setopt EXTENDED_GLOB
 
 # customize the prompt
 autoload -U colors && colors
