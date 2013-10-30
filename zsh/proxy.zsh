@@ -88,7 +88,7 @@ function auto_fast_proxy() {
     echo "Interval between proxy updates set to $time seconds."
     echo "Proxy updates will take ~30 seconds."
     while true; do
-	echo -ne "Calculating... "
+	echo -ne "\rCalculating... "
 	set_fastest_proxy
 	for ((i = 0; i < $(($time)); i++)); do
 	    echo -ne "\rSleeping for $(($time - $i)) seconds..."
