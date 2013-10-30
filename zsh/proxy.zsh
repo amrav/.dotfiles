@@ -22,7 +22,7 @@ change_proxy 'apple'
 
 proxies=( \
     "http://10.3.100.209:8080" \
-    "http://10.3.100.210:8080" \    
+    "http://10.3.100.210:8080" \
     "http://10.3.100.211:8080" \
     "http://10.3.100.212:8080" \
     "http://144.16.192.213:8080" \
@@ -31,7 +31,8 @@ proxies=( \
     "http://144.16.192.218:8080" \
     "http://144.16.192.245:8080" \
     "http://144.16.192.247:8080" \
-    "http://203.110.246.109:8888")
+    "http://203.110.246.109:8888" \
+    "http://203.110.246.109:8000")
 
 # Use Microsoft servers to download large file
 large_file_url="http://download.microsoft.com/download/8/A/C/8AC7C482-BC74-492E-B978-7ED04900CEDE/IE10-Windows6.1-x86-en-us.exe"
@@ -49,7 +50,6 @@ function _speedtest_proxies() {
 	    $large_file_url >> ~/.speedtest_proxy &
 	pids+=$!
     done
-    echo "Waiting for results..."
     for pid in $pids; do
     	wait $pid >& /dev/null
     done
@@ -88,8 +88,13 @@ function auto_fast_proxy() {
     echo "Interval between proxy updates set to $time seconds."
     echo "Proxy updates will take ~30 seconds."
     while true; do
+	echo -ne "Calculating... "
 	set_fastest_proxy
-	sleep $time
+	for ((i = 0; i < $(($time)); i++)); do
+	    echo -ne "\rSleeping for $(($time - $i)) seconds..."
+	    sleep 1
+	    echo -ne "\r                                       "
+	done;
     done
 }
 
