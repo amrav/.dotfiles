@@ -67,19 +67,16 @@ function remove_messages() {
 function speedtest_proxies() {
     local time=30
     [[ $1 -gt 0 ]] && time=$1
-    _speedtest_proxies $time | grep --color=never '.*'
+    _speedtest_proxies $time | grep --color=never '.*'    
 }
 
-function set_fastest_proxy() {
+function get_fastest_proxy() {
     local time=30
     [[ $1 -gt 0 ]] && time=$1
-    local fastest_proxy="$(speedtest_proxies $time | grep '^http' | head -1 | \
+    local speedtest_output="$(speedtest_proxies $time)"
+    echo "$(echo -n $speedtest_output | grep '^http' | head -1 | \
 	awk -F '[ :/]+' '{print $2, $3}')"
-    # weird form with echo required because of fastest_proxy being interpreted
-    # as single argument
-    sudo networksetup -setsecurewebproxy "Wi-Fi" $(echo -n $fastest_proxy)
-    sudo networksetup -setwebproxy "Wi-Fi" $(echo -n $fastest_proxy)
-    echo "Fastest proxy set as $fastest_proxy"
+    update_proxy_gist $speedtest_output &
 }
 
 function auto_fast_proxy() {
@@ -89,13 +86,25 @@ function auto_fast_proxy() {
     echo "Proxy updates will take ~30 seconds."
     while true; do
 	echo -ne "\rCalculating... "
-	set_fastest_proxy
+	local fastest_proxy="$(get_fastest_proxy 5)"
+	# weird form with echo required because of fastest_proxy being interpreted
+	# as single argument
+	sudo networksetup -setsecurewebproxy "Wi-Fi" $(echo -n $fastest_proxy)
+	sudo networksetup -setwebproxy "Wi-Fi" $(echo -n $fastest_proxy)
+	echo "Fastest proxy set as $fastest_proxy"
 	for ((i = 0; i < $(($time)); i++)); do
 	    echo -ne "\rSleeping for $(($time - $i)) seconds..."
 	    sleep 1
 	    echo -ne "\r                                       "
 	done;
     done
+}
+
+function update_proxy_gist() {
+    local fastest_proxies="$(echo -n $1 | grep -v '203\.110\.246\.109' | grep '^http' | head -3 |  awk -F '[ :/]+' '{print $2, $3}')"
+    local PROXY_GIST_ID="7310783"
+    update="$(date)\n$fastest_proxies"
+    echo -n $update | gist -u $PROXY_GIST_ID > /dev/null
 }
 
     
