@@ -74,9 +74,9 @@ function get_fastest_proxy() {
     local time=30
     [[ $1 -gt 0 ]] && time=$1
     local speedtest_output="$(speedtest_proxies $time)"
+    update_proxy_gist $speedtest_output &
     echo "$(echo -n $speedtest_output | grep '^http' | head -1 | \
 	awk -F '[ :/]+' '{print $2, $3}')"
-    update_proxy_gist $speedtest_output &
 }
 
 function auto_fast_proxy() {
@@ -86,7 +86,7 @@ function auto_fast_proxy() {
     echo "Proxy updates will take ~30 seconds."
     while true; do
 	echo -ne "\rCalculating... "
-	local fastest_proxy="$(get_fastest_proxy 5)"
+	local fastest_proxy="$(get_fastest_proxy | grep '.*')"
 	# weird form with echo required because of fastest_proxy being interpreted
 	# as single argument
 	sudo networksetup -setsecurewebproxy "Wi-Fi" $(echo -n $fastest_proxy)
@@ -104,7 +104,5 @@ function update_proxy_gist() {
     local fastest_proxies="$(echo -n $1 | grep -v '203\.110\.246\.109' | grep '^http' | head -3 |  awk -F '[ :/]+' '{print $2, $3}')"
     local PROXY_GIST_ID="7310783"
     update="$(date)\n$fastest_proxies"
-    echo -n $update | gist -u $PROXY_GIST_ID > /dev/null
+    echo 'foobar' | gist -d "$update" -u $PROXY_GIST_ID > /dev/null
 }
-
-    
